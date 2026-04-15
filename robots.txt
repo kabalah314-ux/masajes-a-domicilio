@@ -1,0 +1,19 @@
+# robots.txt — masajesadomicilio.es
+# Última actualización: 2026-03-30
+
+User-agent: *
+Allow: /
+
+# Bloquear archivos de configuración y JS/CSS que no necesitan indexarse
+Disallow: /js/
+Disallow: /css/
+Disallow: /img/
+
+# Permitir Googlebot acceso a recursos necesarios para renderizar
+User-agent: Googlebot
+Allow: /js/
+Allow: /css/
+Allow: /img/
+
+# Sitemap
+Sitemap: https://www.masajesadomicilio.es/sitemap.xml
