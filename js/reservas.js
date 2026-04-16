@@ -145,7 +145,7 @@
     // Backend en Render o Local
     const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || window.location.protocol === 'file:'
       ? 'http://localhost:8000/api' 
-      : 'https://tu-backend-fastapi.onrender.com/api'; // <-- Sustituye con tu URL real en Render
+      : 'https://masajes-a-domicilio.onrender.com/api';
 
     try {
       const res = await fetch(`${API_BASE}/slots?month=${monthStr}`);
@@ -239,7 +239,7 @@
       // Backend en Render o Local
       const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || window.location.protocol === 'file:'
         ? 'http://localhost:8000/api' 
-        : 'https://tu-backend-fastapi.onrender.com/api'; // <-- Sustituye con tu URL real en Render
+        : 'https://masajes-a-domicilio.onrender.com/api';
         
       // Llamada al Backend Autónomo de Python
       const res = await fetch(`${API_BASE}/slots?date=${dateStr}`);
