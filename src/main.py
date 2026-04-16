@@ -10,7 +10,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.api.webhook_router import router as webhook_router
+from src.api.booking_router import router as booking_router
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,8 +38,18 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Registrar el router de webhooks
+# Configuración de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permitir front-end Netlify/github
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Registrar routers
 app.include_router(webhook_router)
+app.include_router(booking_router)
 
 
 @app.get("/")

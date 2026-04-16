@@ -4,3 +4,6 @@ google-genai
 python-dotenv
 requests
 aiohttp
+google-api-python-client
+google-auth
+pytz

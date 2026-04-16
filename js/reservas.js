@@ -142,8 +142,13 @@
     // 1. Fetch de slots para todo el mes (la nueva ruta en get-slots)
     const monthStr = `${year}-${String(mo + 1).padStart(2, '0')}`;
     let availableDates = [];
+    // Backend en Render o Local
+    const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || window.location.protocol === 'file:'
+      ? 'http://localhost:8000/api' 
+      : 'https://tu-backend-fastapi.onrender.com/api'; // <-- Sustituye con tu URL real en Render
+
     try {
-      const res = await fetch(`/.netlify/functions/get-slots?month=${monthStr}`);
+      const res = await fetch(`${API_BASE}/slots?month=${monthStr}`);
       if (res.ok) {
         const data = await res.json();
         availableDates = data.availableDates || [];
@@ -231,8 +236,13 @@
     const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
     try {
-      // Llamada al Backend Nativo (Proxy a Google Calendar API)
-      const res = await fetch(`/.netlify/functions/get-slots?date=${dateStr}`);
+      // Backend en Render o Local
+      const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || window.location.protocol === 'file:'
+        ? 'http://localhost:8000/api' 
+        : 'https://tu-backend-fastapi.onrender.com/api'; // <-- Sustituye con tu URL real en Render
+        
+      // Llamada al Backend Autónomo de Python
+      const res = await fetch(`${API_BASE}/slots?date=${dateStr}`);
       if (!res.ok) throw new Error('Error de red');
       const data = await res.json();
       
@@ -330,18 +340,20 @@
          notes: booking.dolencia
       };
 
-      // URL del Webhook de n8n (Cerebro de IA + Registro en Google Sheets)
-      const N8N_WEBHOOK_URL = 'https://n8n-veterinaria.onrender.com/webhook/triaje-ai';
+      // Backend FastAPI Render para orquestar la reserva
+      const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || window.location.protocol === 'file:'
+        ? 'http://localhost:8000/api' 
+        : 'https://tu-backend-fastapi.onrender.com/api'; // <-- Sustituye con tu URL real en Render
 
-      const res = await fetch(N8N_WEBHOOK_URL, {
+      const res = await fetch(`${API_BASE}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       
       const result = await res.json();
-      // Validamos si n8n responde correctamente
-      if (!res.ok) throw new Error(result.message || 'Error en servidor de automatización');
+      // Validamos si el backend de Render responde correctamente
+      if (!res.ok) throw new Error(result.message || 'Error en servidor de FastAPI Render');
 
     } catch (err) {
       console.warn('Error al hacer POST (Netlify dev), forzando éxito visual por demo:', err.message);
