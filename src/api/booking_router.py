@@ -111,6 +111,19 @@ async def create_booking(payload: BookingPayload):
     client_template = os.getenv("WA_TEMPLATE_NAME", "confirmacion_oscar")
     oscar_template = os.getenv("WA_OSCAR_TEMPLATE_NAME", client_template)
     
+    # Prevenir el error 400 de Meta enviando 5 parametros a una plantilla diseñada para 4.
+    if oscar_template == client_template or oscar_template == "aviso_nueva_reserva":
+        # Meta se queja de un "Mismatch" de parámetros si enviamos 5 y la plantilla no está aprobada 
+        # así. Usamos temporalmente 4 por si la de Oscar no está verificada aún en Meta.
+        oscar_components = [
+            {"type": "body", "parameters": [
+                {"type": "text", "text": payload.full_name},
+                {"type": "text", "text": fecha_legible},
+                {"type": "text", "text": hora_legible},
+                {"type": "text", "text": payload.address}
+            ]}
+        ]
+    
     # Enviar al cliente
     send_template_message(payload.phone, client_template, client_components)
     # Enviar la vCard de oscar al cliente (opcional y sin bloqueo)
