@@ -16,6 +16,14 @@ META_PHONE_ID = os.getenv("META_PHONE_ID")
 
 GRAPH_API_URL = f"https://graph.facebook.com/v19.0/{META_PHONE_ID}/messages"
 
+def _format_phone(phone: str) -> str:
+    """Limpia el nmero y le aade el prefijo 34 si es necesario."""
+    clean = "".join(filter(str.isdigit, phone))
+    # Si tiene 9 dgitos y empieza por 6, 7 o 9 (formato espaol estndar sin prefijo)
+    if len(clean) == 9 and clean[0] in "679":
+        return "34" + clean
+    return clean
+
 
 def send_text_message(to: str, text: str) -> bool:
     """
@@ -37,10 +45,12 @@ def send_text_message(to: str, text: str) -> bool:
         "Content-Type": "application/json",
     }
 
+    clean_phone = _format_phone(to)
+
     payload = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
-        "to": to,
+        "to": clean_phone,
         "type": "text",
         "text": {"body": text},
     }
@@ -71,7 +81,7 @@ def send_template_message(to: str, template_name: str, components: list) -> bool
     }
     
     # Limpiamos el número de teléfono
-    clean_phone = "".join(filter(str.isdigit, to))
+    clean_phone = _format_phone(to)
 
     payload = {
         "messaging_product": "whatsapp",
@@ -106,7 +116,7 @@ def send_contact_card(to: str) -> bool:
         return False
 
     oscar_phone = os.getenv("OSCAR_REAL_PHONE", "34670409550")
-    clean_phone = "".join(filter(str.isdigit, to))
+    clean_phone = _format_phone(to)
 
     headers = {
         "Authorization": f"Bearer {META_TOKEN}",
