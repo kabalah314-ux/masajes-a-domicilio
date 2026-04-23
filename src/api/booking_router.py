@@ -52,7 +52,7 @@ async def create_booking(payload: BookingPayload):
     """
     logger.info(f"[BOOKING-API] Nueva peticion de reserva de {payload.full_name} para {payload.date} {payload.time}")
     
-    # 1. Guardar en Google Calendar
+    # 1. Guardar en Google Calendar (siempre primero, nunca se cancela por fallo de WA)
     cal_success = insert_appointment(
         date_str=payload.date,
         time_str=payload.time,
@@ -63,17 +63,13 @@ async def create_booking(payload: BookingPayload):
         notes=payload.notes
     )
     
-    # Aunque el calendario falle localmente, continuamos con la reserva (o depende del nivel de rigidez deseado)
     if not cal_success:
-        logger.warning("[BOOKING-API] Aviso: no se ha grabado en Google Calendar, puede que falle la auteticación local, pero seguimos el flujo.")
+        logger.warning("[BOOKING-API] ⚠️ Aviso: no se ha grabado en Google Calendar. Continuando con el flujo de WA.")
     
-    # 2. Enviar WhatsApps
+    # 2. Preparar parámetros comunes
     nombre_pila = payload.full_name.split(' ')[0]
     oscar_phone = os.getenv("OSCAR_REAL_PHONE", "34670409550")
     
-    # Reconstruímos el formato español legible
-    # Python std no parsea nombres en español de forma fácil con strftime, 
-    # usar un array básico
     yyyy, mm, dd = map(int, payload.date.split('-'))
     meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
     dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado', 'Domingo']
@@ -82,54 +78,46 @@ async def create_booking(payload: BookingPayload):
     
     fecha_legible = f"{dias[dia_semana]}, {dd} de {meses[mm-1]}"
     hora_legible = f"{payload.time}h"
-    
     clean_client_phone = "".join(filter(str.isdigit, payload.phone))
     wa_me_link = f"https://wa.me/{clean_client_phone}"
     
-    # Parametros esperados por las plantillas Meta (asegurar el número correcto de param)
-    # Plantilla de cliente: {{1}} Nombre, {{2}} Fecha, {{3}} Hora, {{4}} Direccion
+    # 3. Nombres de las plantillas Meta (deben coincidir EXACTAMENTE con las aprobadas en Meta)
+    # ⚠️  IMPORTANTE: Ve a Meta Business → WhatsApp Manager → Plantillas de mensajes
+    # y verifica que estas plantillas existen y están APROBADAS con estos parámetros.
+    client_template = os.getenv("WA_TEMPLATE_NAME", "confirmacion_reserva")
+    oscar_template = os.getenv("WA_OSCAR_TEMPLATE_NAME", "aviso_nueva_reserva")
+    
+    # PLANTILLA CLIENTE: confirmacion_reserva
+    # Texto Meta: "Hola {{1}}, tu masaje a domicilio está confirmado 🌿\nFecha: {{2}} a las {{3}}\nDirección: {{4}}\n\n¡Muchas gracias por confiar en Masajes Boutique!"
+    # Parámetros: 4 (¡exactos!)
     client_components = [
         {"type": "body", "parameters": [
-            {"type": "text", "text": nombre_pila},
-            {"type": "text", "text": fecha_legible},
-            {"type": "text", "text": hora_legible},
-            {"type": "text", "text": payload.address}
+            {"type": "text", "text": nombre_pila},        # {{1}} Nombre de pila
+            {"type": "text", "text": fecha_legible},      # {{2}} Fecha legible
+            {"type": "text", "text": hora_legible},       # {{3}} Hora
+            {"type": "text", "text": payload.address}    # {{4}} Dirección
         ]}
     ]
     
-    # Plantilla de Oscar: {{1}} Nombre completo, {{2}} Fecha, {{3}} Hora, {{4}} Direccion, {{5}} Link wa.me
+    # PLANTILLA OSCAR: aviso_nueva_reserva
+    # Texto Meta: "📥 Nueva reserva de {{1}}\nFecha: {{2}} a las {{3}}\nDirección: {{4}}\nContacto: {{5}}" 
+    # Parámetros: 5 (¡exactos!)
     oscar_components = [
         {"type": "body", "parameters": [
-            {"type": "text", "text": payload.full_name},
-            {"type": "text", "text": fecha_legible},
-            {"type": "text", "text": hora_legible},
-            {"type": "text", "text": payload.address},
-            {"type": "text", "text": wa_me_link}
+            {"type": "text", "text": payload.full_name},  # {{1}} Nombre completo
+            {"type": "text", "text": fecha_legible},      # {{2}} Fecha legible
+            {"type": "text", "text": hora_legible},       # {{3}} Hora
+            {"type": "text", "text": payload.address},   # {{4}} Dirección
+            {"type": "text", "text": wa_me_link}          # {{5}} Link WhatsApp cliente
         ]}
     ]
     
-    client_template = os.getenv("WA_TEMPLATE_NAME", "confirmacion_oscar")
-    oscar_template = os.getenv("WA_OSCAR_TEMPLATE_NAME", client_template)
-    
-    # Prevenir el error 400 de Meta enviando 5 parametros a una plantilla diseñada para 4.
-    if oscar_template == client_template or oscar_template == "aviso_nueva_reserva":
-        # Meta se queja de un "Mismatch" de parámetros si enviamos 5 y la plantilla no está aprobada 
-        # así. Usamos temporalmente 4 por si la de Oscar no está verificada aún en Meta.
-        oscar_components = [
-            {"type": "body", "parameters": [
-                {"type": "text", "text": payload.full_name},
-                {"type": "text", "text": fecha_legible},
-                {"type": "text", "text": hora_legible},
-                {"type": "text", "text": payload.address}
-            ]}
-        ]
-    
-    # Enviar al cliente
+    # 4. Enviar notificaciones (sin bloqueo: si WA falla, la reserva ya está en Calendar)
+    # Notificación al cliente
     send_template_message(payload.phone, client_template, client_components)
-    # Enviar la vCard de oscar al cliente (opcional y sin bloqueo)
+    # vCard de Oscar al cliente
     send_contact_card(payload.phone)
-    
-    # Enviar a oscar
+    # Notificación interna a Oscar
     send_template_message(oscar_phone, oscar_template, oscar_components)
     
     return {"success": True, "message": "Reserva procesada"}

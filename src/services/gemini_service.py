@@ -1,9 +1,11 @@
 """
 gemini_service.py — Módulo de Inteligencia Artificial
 Integración con Google Gemini usando el SDK oficial google-genai.
+Incluye memoria de conversación por número de teléfono.
 """
 import logging
 import os
+from collections import deque
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -46,7 +48,27 @@ FALLBACK_MESSAGE = (
     "Por favor, escríbeme directamente al 670 409 550 y te atiendo enseguida."
 )
 
-# Inicializar cliente
+# ── Memoria de conversación ───────────────────────────────────────────────────
+# Clave: número de teléfono (str). Valor: deque de dicts {role, parts}
+# Máximo 20 turnos por usuario para evitar tokens infinitos y fugas de memoria.
+MAX_HISTORY_TURNS = 20
+_conversation_history: dict[str, deque] = {}
+
+def _get_history(phone: str) -> list:
+    """Devuelve el historial de conversación de un teléfono como lista."""
+    if phone not in _conversation_history:
+        _conversation_history[phone] = deque(maxlen=MAX_HISTORY_TURNS * 2)
+    return list(_conversation_history[phone])
+
+def _append_to_history(phone: str, role: str, text: str):
+    """Añade un turno al historial de conversación del teléfono."""
+    if phone not in _conversation_history:
+        _conversation_history[phone] = deque(maxlen=MAX_HISTORY_TURNS * 2)
+    _conversation_history[phone].append(
+        types.Content(role=role, parts=[types.Part(text=text)])
+    )
+
+# ── Cliente Gemini ────────────────────────────────────────────────────────────
 _client = None
 
 def _get_client():
@@ -61,12 +83,13 @@ def _get_client():
     return _client
 
 
-def get_ai_response(user_message: str) -> str:
+def get_ai_response(user_message: str, phone: str = "default") -> str:
     """
-    Envía un mensaje a Gemini y devuelve la respuesta generada.
+    Envía un mensaje a Gemini con el historial de conversación y devuelve la respuesta.
 
     Args:
         user_message: El texto del mensaje del cliente.
+        phone: Número de teléfono del cliente (para memoria individual).
 
     Returns:
         Respuesta de texto generada por Gemini, o el mensaje de fallback si falla.
@@ -76,10 +99,15 @@ def get_ai_response(user_message: str) -> str:
         return FALLBACK_MESSAGE
 
     try:
-        logger.info(f"[GEMINI] Enviando mensaje a la IA: '{user_message[:80]}'")
+        logger.info(f"[GEMINI] 📩 Mensaje de {phone}: '{user_message[:80]}'")
+
+        # Añadir el mensaje del usuario al historial ANTES de llamar a Gemini
+        _append_to_history(phone, "user", user_message)
+        history = _get_history(phone)
+
         response = client.models.generate_content(
             model="gemini-2.0-flash",
-            contents=user_message,
+            contents=history,
             config=types.GenerateContentConfig(
                 system_instruction=SYSTEM_PROMPT,
                 max_output_tokens=300,
@@ -87,7 +115,11 @@ def get_ai_response(user_message: str) -> str:
             ),
         )
         ai_text = response.text.strip()
-        logger.info(f"[GEMINI] Respuesta recibida: '{ai_text[:80]}'")
+
+        # Guardar la respuesta de la IA en el historial
+        _append_to_history(phone, "model", ai_text)
+
+        logger.info(f"[GEMINI] ✅ Respuesta a {phone}: '{ai_text[:80]}'")
         return ai_text
     except Exception as e:
         logger.error(f"[GEMINI-ERROR] Fallo al llamar a Gemini: {e}")

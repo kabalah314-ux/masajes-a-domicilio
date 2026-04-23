@@ -171,12 +171,13 @@ def insert_appointment(date_str: str, time_str: str, service_name: str, full_nam
     try:
         service = get_google_auth()
         
-        # date_str: YYYY-MM-DD
-        # time_str: HH:MM
+        # date_str: YYYY-MM-DD, time_str: HH:MM
         yyyy, mm, dd = map(int, date_str.split('-'))
         hh, m_ = map(int, time_str.split(':'))
         
-        start_dt = datetime.datetime(yyyy, mm, dd, hh, m_)
+        # Creamos la datetime con zona horaria de Madrid explícita para evitar
+        # que Google Calendar interprete la hora como UTC (diferencia de +1h/+2h).
+        start_dt = MADRID_TZ.localize(datetime.datetime(yyyy, mm, dd, hh, m_))
         end_dt = start_dt + datetime.timedelta(minutes=90)
         
         event = {
@@ -184,19 +185,16 @@ def insert_appointment(date_str: str, time_str: str, service_name: str, full_nam
             'location': address,
             'description': f'Cliente: {full_name}\nTeléfono: {phone}\nDolencia: {notes or "Ninguna"}\n\nServicio: {service_name}',
             'start': {
-                'dateTime': start_dt.isoformat() + 'Z', # Temporal fake ISO just to pass the timezone cleanly
+                # isoformat() con offset aware produce: 2026-05-20T12:00:00+02:00 ✅
+                'dateTime': start_dt.isoformat(),
                 'timeZone': 'Europe/Madrid',
             },
             'end': {
-                'dateTime': end_dt.isoformat() + 'Z',
+                'dateTime': end_dt.isoformat(),
                 'timeZone': 'Europe/Madrid',
             },
             'colorId': '5'
         }
-        
-        # Para forzar timezone real, el backend Gcal acepta ISO 8601 simple "2024-04-15T18:00:00" con param timeZone  
-        event['start']['dateTime'] = start_dt.strftime("%Y-%m-%dT%H:%M:%S")
-        event['end']['dateTime'] = end_dt.strftime("%Y-%m-%dT%H:%M:%S")
         
         logger.info(f"[CALENDAR-INSERT] Insertando sesión de {service_name} para {full_name} a las {date_str} {time_str}")
         result = service.events().insert(calendarId=CALENDAR_ID, body=event).execute()

@@ -29,7 +29,13 @@ Unificar la lógica de agendamiento, lectura de Google Calendar y automatizació
 - `WA_TEMPLATE_NAME` y `WA_OSCAR_TEMPLATE_NAME`: Nombres internos en Meta de las plantillas aprobadas.
 
 ## Restricciones y Casos Borde Conocidos
-- **Husos Horarios:** Google Calendar API es implacable con las zonas horarias. Deben crearse los eventos con zona horaria estricta de España (`Europe/Madrid`) pasándole la fecha y hora "nominal" local en el ISO dictado por el frontend sin conversiones a UTC erradas.
+- **Husos Horarios:** Google Calendar API es implacable con las zonas horarias. Los eventos deben crearse con `MADRID_TZ.localize()` antes de llamar a `.isoformat()`, que produce el offset correcto `+02:00`/`+01:00`. NUNCA añadir `+ 'Z'` a una datetime local: eso la marca como UTC y desplaza la cita 1-2 horas. [CORREGIDO ✅]
 - **Fail-safe de WhatsApp:** Si Meta/WhatsApp se cae o bloquea, **NUNCA** se debe abortar la escritura en Calendar. Calendar va primero. Si WhatsApp falla, se loggea como error pero la reserva cuenta como confirmada internamente y el Frontend recibe "200 OK".
-- **Formato Teléfonos:** Para generar enlace `wa.me`, se debe limpiar el teléfono de espacios, guiones y signos de '+'. Para la API de Meta, el prefijo internacional va sin el '+'.
+- **Formato Teléfonos:** Para generar enlace `wa.me`, se debe limpiar el teléfono de espacios, guiones y signos de '+'. Para la API de Meta, `_format_phone()` en `whatsapp_service.py` añade el prefijo `34` automáticamente si el número tiene 9 dígitos. [CORREGIDO ✅]
+- **Plantillas Meta — CRÍTICO:** Las plantillas `WA_TEMPLATE_NAME` y `WA_OSCAR_TEMPLATE_NAME` deben existir y estar **APROBADAS** en Meta Business → WhatsApp Manager → Plantillas. El número exacto de parámetros `{{N}}` en el texto de la plantilla debe coincidir exactamente con los que envía el código o Meta devuelve error #132000.
+  - `confirmacion_reserva`: 4 parámetros → {{1}} Nombre, {{2}} Fecha, {{3}} Hora, {{4}} Dirección
+  - `aviso_nueva_reserva`: 5 parámetros → {{1}} Nombre, {{2}} Fecha, {{3}} Hora, {{4}} Dirección, {{5}} Link wa.me
+- **Modo Desarrollo Meta (#131030):** En modo sandbox solo se puede enviar a números añadidos manualmente como testers en la consola de Meta (developers.facebook.com → App → WhatsApp → Quick Start). Para clientes reales hay que pasar la app a Modo Live (requiere verificación de empresa).
+- **Memoria de Conversación:** El chatbot ahora mantiene historial por número de teléfono en `_conversation_history` (dict de deques, máx 20 turnos). Al reiniciar el servidor se pierde el historial. Para persistencia se necesitaría Redis.
+
 - **Estructura Plantillas:** En Meta, si la plantilla requiere 4 parámetros `{{1}} {{2}} {{3}} {{4}}`, el body components no debe tener ni 3 ni 5, o fallará con error 400.

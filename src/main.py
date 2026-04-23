@@ -41,7 +41,11 @@ app = FastAPI(
 # Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permitir front-end Netlify/github
+    allow_origins=[
+        "https://masajesboutique.netlify.app",
+        "http://localhost:3000",   # para pruebas locales
+        "http://127.0.0.1:5500",  # para Live Server de VS Code
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

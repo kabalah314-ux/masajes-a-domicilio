@@ -83,8 +83,8 @@ async def receive_message(request: Request):
         user_text = message.get("text", {}).get("body", "")
         logger.info(f"[WEBHOOK-INCOMING] 📩 Mensaje de {sender_phone}: '{user_text}'")
 
-        # Llamar a la IA y obtener respuesta
-        ai_response = get_ai_response(user_text)
+        # Llamar a la IA pasando el teléfono para mantener memoria de conversación
+        ai_response = get_ai_response(user_text, phone=sender_phone)
 
         # Enviar la respuesta al usuario
         send_text_message(sender_phone, ai_response)
