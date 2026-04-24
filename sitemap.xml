@@ -4,7 +4,7 @@
 
   <!-- Página principal -->
   <url>
-    <loc>https://www.masajesadomicilio.es/</loc>
+    <loc>https://www.masajesadomicilio.site/</loc>
     <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -12,7 +12,7 @@
 
   <!-- Página de reservas -->
   <url>
-    <loc>https://www.masajesadomicilio.es/reservas.html</loc>
+    <loc>https://www.masajesadomicilio.site/reservas.html</loc>
     <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -20,7 +20,7 @@
 
   <!-- Landing: Masaje Descontracturante -->
   <url>
-    <loc>https://www.masajesadomicilio.es/landing/descontracturante.html</loc>
+    <loc>https://www.masajesadomicilio.site/landing/descontracturante.html</loc>
     <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -28,7 +28,7 @@
 
   <!-- Landing: Masaje Ayurveda -->
   <url>
-    <loc>https://www.masajesadomicilio.es/landing/ayurveda.html</loc>
+    <loc>https://www.masajesadomicilio.site/landing/ayurveda.html</loc>
     <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -36,7 +36,7 @@
 
   <!-- Landing: Masaje Parejas -->
   <url>
-    <loc>https://www.masajesadomicilio.es/landing/parejas.html</loc>
+    <loc>https://www.masajesadomicilio.site/landing/parejas.html</loc>
     <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
