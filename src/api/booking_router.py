@@ -7,11 +7,21 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
 
-from src.services.calendar_service import get_slots_for_month, get_slots_for_date, insert_appointment
+from src.services.calendar_service import get_slots_for_month, get_slots_for_date, insert_appointment, test_google_auth
 from src.services.whatsapp_service import send_template_message, send_contact_card
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api")
+
+@router.get("/calendar-health")
+async def calendar_health():
+    """Diagnóstico: verifica si Google Calendar funciona en este entorno."""
+    result = test_google_auth()
+    if result["ok"]:
+        logger.info("[CALENDAR-HEALTH] ✅ Google Calendar auth OK")
+    else:
+        logger.error(f"[CALENDAR-HEALTH] ❌ FAILED: {result['error']}")
+    return result
 
 class BookingPayload(BaseModel):
     date: str

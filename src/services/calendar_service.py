@@ -27,7 +27,15 @@ def get_google_auth():
     private_key = os.getenv("GOOGLE_PRIVATE_KEY")
     
     if client_email and private_key:
-        private_key = private_key.replace('\\n', '\n')
+        # Intenta múltiples formatos de newline (Render puede almacenarlos de formas distintas)
+        if '\n' not in private_key and '\\n' in private_key:
+            private_key = private_key.replace('\\n', '\n')  # literal \n → newline
+        elif '\n' not in private_key:
+            # Intenta unicode_escape si no tiene newlines reales ni literales
+            try:
+                private_key = bytes(private_key, 'utf-8').decode('unicode_escape')
+            except Exception:
+                private_key = private_key.replace('\\n', '\n')
         info = {
             "type": "service_account",
             "project_id": "masajes-boutique",
@@ -50,9 +58,22 @@ def get_google_auth():
     
     return build('calendar', 'v3', credentials=creds)
 
+def test_google_auth() -> dict:
+    """Diagnóstico: verifica si las credenciales de Google Calendar funcionan."""
+    try:
+        svc = get_google_auth()
+        result = svc.calendarList().list(maxResults=1).execute()
+        return {"ok": True, "calendars": len(result.get('items', []))}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 def get_slots_for_month(yyyy: int, mm: int) -> list:
     """Delvuelve una lista de las fechas (YYYY-MM-DD) del mes que tienen al menos un hueco libre."""
-    service = get_google_auth()
+    try:
+        service = get_google_auth()
+    except Exception as e:
+        logger.error(f"[CALENDAR-AUTH-ERROR] Falló autenticación Google en get_slots_for_month: {e}")
+        return []  # Devuelve vacío — el front mostrará todos los días como disponibles (optimista)
     
     _, days_in_month = calendar.monthrange(yyyy, mm)
     
