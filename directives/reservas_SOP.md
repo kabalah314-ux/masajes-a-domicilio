@@ -39,3 +39,5 @@ Unificar la lógica de agendamiento, lectura de Google Calendar y automatizació
 - **Memoria de Conversación:** El chatbot ahora mantiene historial por número de teléfono en `_conversation_history` (dict de deques, máx 20 turnos). Al reiniciar el servidor se pierde el historial. Para persistencia se necesitaría Redis.
 
 - **Estructura Plantillas:** En Meta, si la plantilla requiere 4 parámetros `{{1}} {{2}} {{3}} {{4}}`, el body components no debe tener ni 3 ni 5, o fallará con error 400.
+- **URL Backend en Frontend — CRÍTICO:** `js/reservas.js` tiene la URL del backend hardcodeada en 3 sitios (GET slots mes, GET slots día, POST bookings). SIEMPRE verificar que apuntan a `masajes-a-domicilio.onrender.com/api`. En Abr-2026 se detectó que el POST de bookings apuntaba a un placeholder (`tu-backend-fastapi.onrender.com`) → las reservas se enviaban al vacío y el frontend mostraba "éxito" porque el `catch` lo tragaba. [CORREGIDO ✅]
+- **Render Plan Gratuito:** El servidor se duerme tras ~15min de inactividad. El primer request tras dormir tarda ~30s (cold start). Esto puede causar timeout en la carga de slots del calendario.
