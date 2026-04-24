@@ -260,7 +260,7 @@ p  { max-width: 65ch; }
 .hero__bg {
   position: absolute;
   inset: 0;
-  background: url('../img/hero-bg.jpg') center/cover no-repeat;
+  background: url('../img/hero-oscar.jpg') center/cover no-repeat;
   transform: scale(1.04);
   transition: transform 8s ease-out;
 }
@@ -349,7 +349,7 @@ p  { max-width: 65ch; }
 .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 .card__image-wrap {
   position: relative;
-  aspect-ratio: 16/9;
+  aspect-ratio: 4/3;
   overflow: hidden;
 }
 .card__image-wrap img {

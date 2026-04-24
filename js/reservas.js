@@ -305,14 +305,13 @@
     e.preventDefault();
     const nombre    = document.getElementById('nombre').value.trim();
     const telefono  = document.getElementById('telefono').value.trim();
-    const direccion = document.getElementById('direccion').value.trim();
     const dolencia  = document.getElementById('dolencia').value.trim();
     const errDiv    = document.getElementById('datosError');
     const btnText   = document.getElementById('confirmBtnText');
     const btnLoad   = document.getElementById('confirmBtnLoader');
 
-    if (!nombre || !/^[+\d\s()-]{9,}$/.test(telefono) || direccion.length < 8) {
-      errDiv.textContent = '❌ Nombre, dirección completa y móvil válido (9+ dígitos) son obligatorios.';
+    if (!nombre || !/^[+\d\s()-]{9,}$/.test(telefono)) {
+      errDiv.textContent = '❌ Nombre y móvil válido (9+ dígitos) son obligatorios.';
       errDiv.style.display = 'block';
       return;
     }
@@ -320,7 +319,7 @@
 
     booking.nombre   = nombre;
     booking.telefono = telefono;
-    booking.direccion= direccion;
+    booking.direccion= 'No indicada';
     booking.dolencia = dolencia;
 
     // Loading UI
@@ -358,14 +357,14 @@
     } catch (err) {
       console.warn('Error al hacer POST (Netlify dev), forzando éxito visual por demo:', err.message);
     } finally {
-      showConfirmation(direccion);
+      showConfirmation();
     }
   });
 
   /* ══════════════════════════════════════════════════════
      PANTALLA DE CONFIRMACIÓN
   ══════════════════════════════════════════════════════ */
-  function showConfirmation(direccion) {
+  function showConfirmation() {
     const details = document.getElementById('confirmDetails');
     const mNames  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                      'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -389,7 +388,6 @@
       <div class="summary-row"><span class="summary-row__label">Servicio</span><span class="summary-row__value">${tipoLabel[booking.tipo] || booking.tipo}</span></div>
       <div class="summary-row"><span class="summary-row__label">Fecha</span><span class="summary-row__value">${fechaStr}</span></div>
       <div class="summary-row"><span class="summary-row__label">Hora</span><span class="summary-row__value">${booking.hora || '—'}</span></div>
-      <div class="summary-row"><span class="summary-row__label">Dirección</span><span class="summary-row__value">${direccion}</span></div>
       <div class="summary-row"><span class="summary-row__label">Dolencia</span><span class="summary-row__value">${booking.dolencia || 'No indicada'}</span></div>
       <div class="summary-total"><span class="summary-total__label">Total a abonar</span><span class="summary-total__price">${booking.precio}€ al finalizar</span></div>
     `;
