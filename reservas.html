@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservar Masaje a Domicilio Barcelona | Masajesadomicilio.es</title>
+  <meta name="description" content="Reserva tu masaje a domicilio en Barcelona en 3 pasos. Elige tipo, fecha y horario. Confirmación inmediata por WhatsApp. Pago al finalizar en efectivo o Bizum.">
+  <link rel="canonical" href="https://www.masajesadomicilio.es/reservas.html">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header__inner">
+      <a href="index.html" class="header__logo">Masajes<span>adomicilio</span><small>BARCELONA · TERAPEUTA PERSONAL</small></a>
+      <nav role="navigation" aria-label="Navegación">
+        <ul class="nav__links">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="index.html#servicios">Servicios</a></li>
+        </ul>
+        <button class="nav__burger" aria-label="Abrir menú" id="burgerBtn"><span></span><span></span><span></span></button>
+      </nav>
+    </div>
+  </header>
+  <ul class="nav__mobile" id="mobileMenu">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#servicios">Servicios</a></li>
+  </ul>
+
+  <main id="main">
+    <div style="padding:2rem var(--px) 1rem;max-width:1100px;margin:0 auto">
+      <h1 style="font-size:clamp(1.4rem,4vw,2rem)">Reserva tu masaje</h1>
+      <p class="text-muted">Solo 3 pasos. Confirmación inmediata por WhatsApp. Pago al finalizar en efectivo o Bizum.</p>
+    </div>
+
+    <!-- NAV DE PASOS -->
+    <div style="padding:0 var(--px);max-width:1100px;margin:0 auto">
+      <div class="booking-steps-nav" role="tablist" aria-label="Pasos de la reserva">
+        <button class="booking-step-tab is-active" role="tab" id="tab-1" aria-selected="true" data-step="1">1. Servicio</button>
+        <button class="booking-step-tab" role="tab" id="tab-2" aria-selected="false" data-step="2">2. Fecha & Hora</button>
+        <button class="booking-step-tab" role="tab" id="tab-3" aria-selected="false" data-step="3">3. Tus datos</button>
+      </div>
+    </div>
+
+    <div class="booking-layout">
+      <!-- COLUMNA PRINCIPAL -->
+      <div>
+        <!-- PASO 1: SERVICIO -->
+        <div class="booking-panel is-active" id="panel-1" role="tabpanel" aria-labelledby="tab-1">
+          <h2 style="font-size:1.25rem;margin-bottom:1.25rem">¿Qué masaje deseas?</h2>
+          <div class="tipo-grid" role="radiogroup" aria-label="Tipo de masaje">
+            <div class="tipo-card" data-tipo="descontracturante" data-price="65" tabindex="0" role="radio" aria-checked="false">
+              <div class="tipo-card__icon">💆</div>
+              <div class="tipo-card__info">
+                <h4>Descontracturante</h4>
+                <p>Presión profunda · Alivia contracturas y tensiones musculares</p>
+              </div>
+              <div class="tipo-card__price">65€ <span style="font-size:.7rem;color:#7A6E68">/60min</span></div>
+            </div>
+            <div class="tipo-card" data-tipo="ayurveda" data-price="75" tabindex="0" role="radio" aria-checked="false">
+              <div class="tipo-card__icon">🪷</div>
+              <div class="tipo-card__info">
+                <h4>Ayurveda</h4>
+                <p>Aceites calientes · Equilibrio cuerpo-mente · Ritual holístico</p>
+              </div>
+              <div class="tipo-card__price">75€ <span style="font-size:.7rem;color:#7A6E68">/75min</span></div>
+            </div>
+            <div class="tipo-card" data-tipo="relajante" data-price="65" tabindex="0" role="radio" aria-checked="false">
+              <div class="tipo-card__icon">🌊</div>
+              <div class="tipo-card__info">
+                <h4>Relajante</h4>
+                <p>Suave y reconfortante · Reduce el estrés y relaja el sistema nervioso</p>
+              </div>
+              <div class="tipo-card__price">65€ <span style="font-size:.7rem;color:#7A6E68">/60min</span></div>
+            </div>
+          </div>
+
+          <!-- Info confort -->
+          <div style="margin-top:1.5rem;padding:1rem;background:var(--color-surface-2);border-radius:var(--radius-sm);font-size:.85rem;color:var(--color-text-muted);border-left:3px solid var(--color-secondary)">
+            🛋️ <strong>Para tu máxima comodidad</strong>, realizamos el masaje directamente en tu sofá o cama, transformando tu espacio en un oasis de relax. Solo te pedimos un par de toallas para tu total confort.
+          </div>
+
+          <div style="margin-top:1.5rem;display:flex;justify-content:flex-end">
+            <button class="btn btn--primary" id="next1" disabled aria-disabled="true">Siguiente: Fecha y hora →</button>
+          </div>
+        </div>
+
+        <!-- PASO 2: FECHA Y HORA (new bubble UI) -->
+        <div class="booking-panel" id="panel-2" role="tabpanel" aria-labelledby="tab-2">
+          <h2 style="font-size:1.25rem;margin-bottom:1.25rem">¿Cuándo nos vemos?</h2>
+
+          <!-- Selector de mes -->
+          <div class="calendar-month-nav">
+            <button class="calendar__nav" id="calPrev" aria-label="Mes anterior">‹</button>
+            <div class="calendar__month" id="calMonth" aria-live="polite">Cargando...</div>
+            <button class="calendar__nav" id="calNext" aria-label="Mes siguiente">›</button>
+          </div>
+
+          <!-- Fila de días tipo burbujas -->
+          <div class="day-picker" id="dayPicker" role="radiogroup" aria-label="Selecciona el día"></div>
+
+          <!-- Horas disponibles -->
+          <div id="slotsSection" style="display:none;margin-top:1.5rem">
+            <h3 style="font-size:.95rem;font-weight:600;margin-bottom:.85rem;color:var(--color-text-muted)">Horarios disponibles</h3>
+            <div class="slots-grid" id="slotsGrid" role="radiogroup" aria-label="Horario disponible"></div>
+          </div>
+
+          <!-- UI Spinner de carga para las horas -->
+          <div id="slotsLoader" style="display:none;margin-top:1.5rem;text-align:center">
+            <span class="spinner" style="display:inline-block;width:24px;height:24px;border:3px solid var(--color-surface-2);border-bottom-color:var(--color-primary);border-radius:50%;animation:spin 1s linear infinite;"></span>
+            <p style="font-size:.85rem;color:var(--color-text-muted);margin-top:.5rem">Cargando disponibilidad real...</p>
+          </div>
+
+          <div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:space-between">
+            <button class="btn btn--outline" id="back2">← Volver</button>
+            <button class="btn btn--primary" id="next2" disabled aria-disabled="true">Siguiente: Mis datos →</button>
+          </div>
+        </div>
+
+        <!-- PASO 3: DATOS PERSONALES -->
+        <div class="booking-panel" id="panel-3" role="tabpanel" aria-labelledby="tab-3">
+          <h2 style="font-size:1.25rem;margin-bottom:1.25rem">Casi listo, ¿cómo te llamas?</h2>
+          <form id="datosForm" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="nombre">Tu nombre *</label>
+              <input class="form-input" type="text" id="nombre" name="nombre" placeholder="Tu nombre" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="telefono">Móvil (para tu WhatsApp de confirmación) *</label>
+              <input class="form-input" type="tel" id="telefono" name="telefono" placeholder="+34 6xx xxx xxx" required autocomplete="tel">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="dolencia">¿Tienes alguna dolencia o zona a trabajar? <span style="font-weight:400;font-style:italic">(opcional)</span></label>
+              <textarea class="form-input" id="dolencia" name="dolencia" rows="3" placeholder="Ej: tensión en cuello..." style="resize:vertical"></textarea>
+            </div>
+
+            <!-- Info pago -->
+            <div style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;background:#F0FDF4;border-radius:var(--radius-sm);border:1px solid #A7F3D0;margin-bottom:1rem">
+              <span style="font-size:1.3rem">💸</span>
+              <span style="font-size:.82rem;color:#065F46">Pago al finalizar, efectivo o <strong>Bizum</strong>.</span>
+            </div>
+
+            <div id="datosError" role="alert" style="color:var(--color-error);font-size:.85rem;display:none;margin-top:.5rem"></div>
+
+            <div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:space-between">
+              <button type="button" class="btn btn--outline" id="back3">← Volver</button>
+              <button type="submit" class="btn btn--gold" id="next3" style="flex:1;min-width:200px;font-size:1rem;position:relative">
+                <span id="confirmBtnText">✅ Confirmar reserva</span>
+                <span id="confirmBtnLoader" style="display:none">
+                  <span class="spinner" style="display:inline-block;width:1rem;height:1rem;border:2px solid #fff;border-bottom-color:transparent;border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:.5rem"></span>
+                  Confirmando cita...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- CONFIRMACIÓN NATIVA (Backend) -->
+        <div class="booking-panel" id="panel-confirmacion" role="tabpanel">
+          <div style="text-align:center;padding:3rem 1rem">
+            <div style="font-size:4rem;margin-bottom:1rem">🎉</div>
+            <h2>¡Tu masaje ha sido reservado con éxito!</h2>
+            <p class="text-muted mt-2">En breve recibirás un WhatsApp de Oscar con todos los detalles de tu sesión.</p>
+            <div id="confirmDetails" style="background:var(--color-surface-2);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;text-align:left"></div>
+            <a href="https://wa.me/34670409550" class="btn btn--whatsapp" target="_blank" rel="noopener" style="margin-bottom:1rem">
+              💬 Abrir WhatsApp
+            </a>
+            <br>
+            <a href="index.html" class="btn btn--outline" style="margin-top:.5rem">← Volver al inicio</a>
+          </div>
+        </div>
+
+        <style>
+          @keyframes spin { 100% { transform: rotate(360deg); } }
+        </style>
+      </div>
+
+      <!-- COLUMNA RESUMEN (sticky en desktop) -->
+      <div>
+        <div class="booking-summary" style="position:sticky;top:calc(4rem + 1rem)" role="complementary" aria-label="Resumen de tu reserva">
+          
+          <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(139, 111, 92, 0.15)">
+            <img src="img/Oscar-retrato.jpg" alt="Oscar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--color-secondary)">
+            <div>
+              <div style="font-weight:600;color:var(--color-heading);font-size:1.05rem">Tu terapeuta: Oscar</div>
+              <div style="font-size:.85rem;color:var(--color-text-muted);display:flex;align-items:center;gap:.35rem">💼 7 años experiencia</div>
+            </div>
+          </div>
+
+          <h3>Tu reserva</h3>
+          <div class="summary-row">
+            <span class="summary-row__label">Servicio</span>
+            <span class="summary-row__value" id="sumTipo">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-row__label">Fecha</span>
+            <span class="summary-row__value" id="sumFecha">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-row__label">Hora</span>
+            <span class="summary-row__value" id="sumHora">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-row__label">Desplazamiento</span>
+            <span class="summary-row__value">Incluido ✓</span>
+          </div>
+          <div class="summary-total">
+            <span class="summary-total__label">Total</span>
+            <span class="summary-total__price" id="sumTotal">—</span>
+          </div>
+          <div style="margin-top:1rem;padding:.75rem;background:var(--color-surface-2);border-radius:var(--radius-sm);font-size:.8rem;color:var(--color-text-muted)">
+            💸 Pago al finalizar — Efectivo o Bizum
+          </div>
+          <div style="margin-top:.75rem;padding:.75rem;background:var(--color-surface-2);border-radius:var(--radius-sm);font-size:.8rem;color:var(--color-text-muted)">
+            🔄 Cancelación gratuita hasta 24h antes
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- WhatsApp flotante -->
+  <a href="https://wa.me/34670409550" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script src="js/main.js" defer></script>
+  <script src="js/reservas.js" defer></script>
+</body>
+</html>
