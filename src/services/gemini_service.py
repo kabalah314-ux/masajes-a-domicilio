@@ -37,7 +37,7 @@ INFORMACIÓN OPERATIVA:
 - Tiempo mínimo de antelación: 3 horas para el mismo día.
 - Horario: Lunes a Sábado, 9:00h a 21:00h.
 - Pago: Efectivo o Bizum al finalizar la sesión.
-- Para reservar: https://masajesboutique.netlify.app/reservas.html
+- Para reservar: https://www.masajesadomicilio.site/reservas.html
 
 Si el cliente quiere reservar o pregunta por horarios disponibles, dile que puede hacerlo
 directamente en el enlace de reservas de arriba. El sistema es rápido y sencillo."""

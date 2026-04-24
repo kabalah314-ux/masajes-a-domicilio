@@ -39,7 +39,7 @@ app = FastAPI(
 )
 
 # Configuración de CORS
-cors_origins_str = os.getenv("CORS_ORIGINS", "https://masajesboutique.netlify.app,http://localhost:3000,http://127.0.0.1:5500")
+cors_origins_str = os.getenv("CORS_ORIGINS", "https://www.masajesadomicilio.site,https://masajesadomicilio.site,https://masajesboutique.netlify.app,http://localhost:3000,http://127.0.0.1:5500")
 cors_origins = [origin.strip() for origin in cors_origins_str.split(",")]
 
 app.add_middleware(
