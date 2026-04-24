@@ -1,4 +1,4 @@
-# robots.txt — masajesadomicilio.es
+# robots.txt — masajesadomicilio.site
 # Última actualización: 2026-03-30
 
 User-agent: *
@@ -16,4 +16,4 @@ Allow: /css/
 Allow: /img/
 
 # Sitemap
-Sitemap: https://www.masajesadomicilio.es/sitemap.xml
+Sitemap: https://www.masajesadomicilio.site/sitemap.xml
