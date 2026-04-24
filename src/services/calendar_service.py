@@ -62,10 +62,18 @@ def test_google_auth() -> dict:
     """Diagnóstico: verifica si las credenciales de Google Calendar funcionan."""
     try:
         svc = get_google_auth()
-        result = svc.calendarList().list(maxResults=1).execute()
-        return {"ok": True, "calendars": len(result.get('items', []))}
+        import datetime
+        now = MADRID_TZ.localize(datetime.datetime.now())
+        result = svc.events().list(
+            calendarId=CALENDAR_ID,
+            timeMin=now.isoformat(),
+            maxResults=1,
+            singleEvents=True
+        ).execute()
+        return {"ok": True, "events_found": len(result.get('items', [])), "calendar_id": CALENDAR_ID}
     except Exception as e:
-        return {"ok": False, "error": str(e)}
+        return {"ok": False, "error": str(e), "calendar_id": CALENDAR_ID}
+
 
 def get_slots_for_month(yyyy: int, mm: int) -> list:
     """Delvuelve una lista de las fechas (YYYY-MM-DD) del mes que tienen al menos un hueco libre."""
