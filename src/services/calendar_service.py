@@ -36,13 +36,14 @@ def get_google_auth():
                 private_key = bytes(private_key, 'utf-8').decode('unicode_escape')
             except Exception:
                 private_key = private_key.replace('\\n', '\n')
+        
         info = {
             "type": "service_account",
-            "project_id": "masajes-boutique",
-            "private_key_id": "dynamic",
+            "project_id": os.getenv("GOOGLE_PROJECT_ID", "masajes-boutique"),
+            "private_key_id": os.getenv("GOOGLE_PRIVATE_KEY_ID", "dynamic"),
             "private_key": private_key,
             "client_email": client_email,
-            "client_id": "dynamic",
+            "client_id": os.getenv("GOOGLE_CLIENT_ID", "dynamic"),
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",

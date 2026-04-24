@@ -17,12 +17,13 @@ Garantizar que el proyecto pueda ser clonado y ejecutado en cualquier entorno (o
 ## Lógica y Pasos
 1. **Protección de Secretos**: Verificar que `.gitignore` incluya `.env`, `google-credentials.json`, `logs/` y carpetas temporales.
 2. **Plantillas de Configuración**:
-   - Crear `.env.example` extrayendo las claves del `.env` original pero borrando los valores.
+   - Crear `.env.example` extrayendo las claves del `.env` original pero borrando los valores. Asegurarse de incluir `CORS_ORIGINS`, `GOOGLE_PROJECT_ID` y `GOOGLE_CLIENT_ID`.
    - Crear `google-credentials.json.example` con la estructura JSON básica pero valores vacíos.
 3. **Documentación de Instalación**:
    - Detallar los pasos de `git clone`.
    - Explicar la instalación de dependencias Python (`pip install -r requirements.txt`) y Node (`npm install`).
    - Indicar cómo configurar los archivos de secretos a partir de las plantillas.
+   - **Nota**: Si el frontend se despliega en una nueva URL, esta debe añadirse a `CORS_ORIGINS` en el backend.
 4. **Sincronización**:
    - Realizar `git add .`, `git commit` y `git push`.
 
