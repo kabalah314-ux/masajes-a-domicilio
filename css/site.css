@@ -206,8 +206,8 @@ p{max-width:68ch}
 /* Landings de masaje */
 .lhero{position:relative;min-height:78svh;display:flex;align-items:flex-end;color:#fff;isolation:isolate;background:var(--night)}
 .lhero__img{position:absolute;inset:0;z-index:-2}
-.lhero__img img{width:100%;height:100%;object-fit:cover}
-.lhero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(23,18,14,.5),rgba(23,18,14,.15) 35%,rgba(23,18,14,.88))}
+.lhero__img img{width:100%;height:100%;object-fit:cover;object-position:60% 50%}
+.lhero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(23,18,14,.6),rgba(23,18,14,.42) 40%,rgba(23,18,14,.9))}
 .lhero .container{padding-top:7rem;padding-bottom:3rem}
 .lhero h1{color:#fff;font-size:clamp(2rem,5.4vw,3.6rem);max-width:18ch}
 .lhero .eyebrow{color:var(--gold)}
